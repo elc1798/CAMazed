@@ -134,6 +134,8 @@ final color wall = color(25, 25, 25);
 final color path = color(230, 230, 230);
 final color walker = color(255, 0, 0);
 
+Node finishNode;
+
 void setup() {
   size(800, 600);
   cap = new Capture(this, width, height);
@@ -176,30 +178,38 @@ int[] findEnd() {
 }
 
 boolean isOnPath(color c) {
-  return abs(red(c) - red(path)) < COLOR_DETECTION_THRESHOLD) && abs(green(c) - green(path)) < COLOR_DETECTION_THRESHOLD) && abs(blue(c) - blue(path)) < COLOR_DETECTION_THRESHOLD;
+  return abs(red(c) - red(path)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(path)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(path)) < COLOR_DETECTION_THRESHOLD;
 }
 
 boolean isOnStart(color c) {
-  return abs(red(c) - red(start)) < COLOR_DETECTION_THRESHOLD) && abs(green(c) - green(start)) < COLOR_DETECTION_THRESHOLD) && abs(blue(c) - blue(start)) < COLOR_DETECTION_THRESHOLD;
+  return abs(red(c) - red(start)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(start)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(start)) < COLOR_DETECTION_THRESHOLD;
 }
 
 boolean isOnEnd(color c) {
-  return abs(red(c) - red(end)) < COLOR_DETECTION_THRESHOLD) && abs(green(c) - green(end)) < COLOR_DETECTION_THRESHOLD) && abs(blue(c) - blue(end)) < COLOR_DETECTION_THRESHOLD;
+  return abs(red(c) - red(end)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(end)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(end)) < COLOR_DETECTION_THRESHOLD;
 }
 
 boolean isOnWall(color c) {
-  return abs(red(c) - red(wall)) < COLOR_DETECTION_THRESHOLD) && abs(green(c) - green(wall)) < COLOR_DETECTION_THRESHOLD) && abs(blue(c) - blue(wall)) < COLOR_DETECTION_THRESHOLD; 
+  return abs(red(c) - red(wall)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(wall)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(wall)) < COLOR_DETECTION_THRESHOLD; 
+}
+
+boolean isOnWalker(color c) {
+  return abs(red(c) - red(walker)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(walker)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(walker)) < COLOR_DETECTION_THRESHOLD; 
 }
 
 boolean outOfBounds(Node n) {
   return n.r < 0 || n.c < 0 || n.r >= cap.height || n.c >= cap.width;  
 }
 
-void AStar() {
+double distance(Node n1 , Node n2) {
+  return (n1.r - n2.r) * (n1.r - n2.r) + (n1.c - n2.c) * (n1.c - n2.c);
+}
+
+Node AStar() {
   int[] startCoor = findStart();
   int[] endCoor = findEnd();
   if (startCoor[0] == -1 || startCoor[1] == -1 || endCoor[0] == -1 || endCoor[1] == -1) {
-    return; 
+    return null;
   }
   Node current = null;
   Node buffer = new Node(startCoor[0], startCoor[1]);
@@ -242,17 +252,17 @@ void AStar() {
         // Check to see if successor should be added based on priority
         for (Node n : children) {
           // If child is out of bounds or a wall or has been visited, do not process
-          if (outOfBounds(n) || grid[n.r][n.c] == WALL || grid[n.r][n.c] == VISITED) {
+          if (outOfBounds(n) || isOnWall(currColor) || isOnWalker(currColor)) {
             continue;
           }
           n.setParent(current);
-          if (grid[n.r][n.c] == GOAL) {
+          if (isOnEnd(currColor)) {
             finishNode = n;
             return n;
           }
           // Use costs to implement heuristics
           n.tailCost = current.tailCost + distance(current, n);
-          n.headCost = (finishCoor[0] - n.r) * (finishCoor[0] - n.r) + (finishCoor[1] - n.c) * (finishCoor[1] - n.c);
+          n.headCost = (endCoor[0] - n.r) * (endCoor[0] - n.r) + (endCoor[1] - n.c) * (endCoor[1] - n.c);
           n.cost = n.tailCost + n.headCost;
 
           // Check if the node is best case for current position
@@ -283,9 +293,17 @@ void AStar() {
   return null;
 }
 
+void loadAStar(Node end) {
+  if (end == null) {
+    return;
+  } else {
+    // Draw out the final path 
+  }
+}
+
 void draw() {
   cap.loadPixels();
   image(cap, 0, 0);
-  AStar();
+  loadAStar(AStar());
 }
 
