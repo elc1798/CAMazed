@@ -67,6 +67,7 @@ void draw() {
   if (worldRecord < 10) { 
     // Draw a circle at the tracked pixel
     fill(trackColor);
+    System.out.printf("%4f , %4f , %4f\n" , red(trackColor) , green(trackColor) , blue(trackColor));
     strokeWeight(4.0);
     stroke(0);
     ellipse(closestX, closestY, 16, 16);

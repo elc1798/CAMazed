@@ -125,16 +125,17 @@ class MazeHeap {
   }
 }
 
-final float COLOR_DETECTION_THRESHOLD = 25.0;
+final float COLOR_DETECTION_THRESHOLD = 60.0;
 
 Capture cap;
-final color start = color(0, 0, 230);
-final color end = color(230, 0, 0);
-final color wall = color(25, 25, 25);
-final color path = color(230, 230, 230);
-final color walker = color(255, 0, 0);
+final color start = color(20, 50, 125);
+final color end = color(125, 10, 10);
+final color wall = color(85, 85, 85);
+final color path = color(180, 180, 180);
+final color walker = color(255, 204, 0);
 
 Node finishNode;
+boolean keepDrawing = true;
 
 void setup() {
   size(800, 600);
@@ -190,18 +191,18 @@ boolean isOnEnd(color c) {
 }
 
 boolean isOnWall(color c) {
-  return abs(red(c) - red(wall)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(wall)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(wall)) < COLOR_DETECTION_THRESHOLD; 
+  return abs(red(c) - red(wall)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(wall)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(wall)) < COLOR_DETECTION_THRESHOLD;
 }
 
 boolean isOnWalker(color c) {
-  return abs(red(c) - red(walker)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(walker)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(walker)) < COLOR_DETECTION_THRESHOLD; 
+  return abs(red(c) - red(walker)) < COLOR_DETECTION_THRESHOLD && abs(green(c) - green(walker)) < COLOR_DETECTION_THRESHOLD && abs(blue(c) - blue(walker)) < COLOR_DETECTION_THRESHOLD;
 }
 
 boolean outOfBounds(Node n) {
-  return n.r < 0 || n.c < 0 || n.r >= cap.height || n.c >= cap.width;  
+  return n.r < 0 || n.c < 0 || n.r >= cap.height || n.c >= cap.width;
 }
 
-double distance(Node n1 , Node n2) {
+double distance(Node n1, Node n2) {
   return (n1.r - n2.r) * (n1.r - n2.r) + (n1.c - n2.c) * (n1.c - n2.c);
 }
 
@@ -243,11 +244,11 @@ Node AStar() {
         new Node(current.r - 1, current.c), 
         new Node(current.r + 1, current.c), 
         new Node(current.r, current.c - 1), 
-        new Node(current.r, current.c + 1),
-        new Node(current.r - 1 , current.c - 1),
-        new Node(current.r - 1 , current.c + 1),
-        new Node(current.r + 1 , current.c - 1),
-        new Node(current.r + 1 , current.c + 1)
+        new Node(current.r, current.c + 1), 
+        new Node(current.r - 1, current.c - 1), 
+        new Node(current.r - 1, current.c + 1), 
+        new Node(current.r + 1, current.c - 1), 
+        new Node(current.r + 1, current.c + 1)
         };
         // Check to see if successor should be added based on priority
         for (Node n : children) {
@@ -297,13 +298,27 @@ void loadAStar(Node end) {
   if (end == null) {
     return;
   } else {
-    // Draw out the final path 
+    PImage drawn = cap;
+    image(drawn , 0 , 0);
+    Node tmp = end;
+    while (tmp != null) {
+      fill(walker);
+      strokeWeight(3.2);
+      stroke(0);
+      ellipse(tmp.r, tmp.c, 15, 15);
+      System.out.printf("%3d , %3d\n" , tmp.r , tmp.c);
+      tmp = tmp.getParent();
+    }
+    image(drawn , 0 , 0);
+    keepDrawing = false;
+    System.out.println("Done!");
   }
 }
 
 void draw() {
-  cap.loadPixels();
-  image(cap, 0, 0);
-  loadAStar(AStar());
+  if (keepDrawing) {
+    cap.loadPixels();
+    image(cap, 0, 0);
+    loadAStar(AStar());
+  }
 }
-
