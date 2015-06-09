@@ -2,129 +2,6 @@ import processing.video.*;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 
-class Node {
-  public int r;
-  public int c;
-
-  public double cost;
-  public double tailCost;
-  public double headCost;
-
-  private Node parent;
-
-  public Node() {
-    r = -1;
-    c = -1;
-    tailCost = 0.0;
-    headCost = 0.0;
-    cost = tailCost + headCost;
-    parent = null;
-  }
-
-  public Node(int x, int y) {
-    r = x;
-    c = y;
-    tailCost = 0.0;
-    headCost = 0.0;
-    cost = tailCost + headCost;
-    parent = null;
-  }
-
-  public void setParent(Node n) {
-    parent = n;
-  }
-
-  public Node getParent() {
-    return parent;
-  }
-
-  public String toString() {
-    return r + "|" + c + "|" + cost;
-  }
-
-  public int compareTo(Node n) {
-    return (int)(1000000.0 * (this.cost - n.cost));
-  }
-}
-
-class MazeHeap {
-
-  private static final int START_SIZE = 2;
-
-  private Node[] q;
-  private int size;
-
-  public MazeHeap() {
-    q = new Node[START_SIZE];
-    q[0] = null;
-    size = 0;
-  }
-
-  public void add(Node n) {
-    if (size == q.length - 1) {
-      doubleArraySize();
-    }
-    int position = ++size;
-    for (/* No initializer */; position > 1 && n.compareTo(q[getParent(position)]) < 0; position = position / 2) {
-      q[position] = q[getParent(position)];
-    }
-    q[position] = n;
-  }
-
-  public Node pop() {
-    if (size == 0) {
-      return null;
-    }
-    Node retVal = q[1];
-    q[1] = q[size--];
-    percolateDownwards(1);
-    return retVal;
-  }
-
-  public Node[] toArray() {
-    return q;
-  }
-
-  public boolean empty() {
-    return size == 0;
-  }
-
-  private void percolateDownwards(int index) {
-    Node tmp = q[index];
-    int child;
-    for (/* No initializer */; 2 * index <= size; index = child) {
-      child = getLeftChild(index);
-      if (child != size && q[child].compareTo(q[child + 1]) > 0) {
-        child++;
-      }
-      if (tmp.compareTo(q[child]) > 0) {
-        q[index] = q[child];
-      } else {
-        break;
-      }
-    }
-    q[index] = tmp;
-  }
-
-  private void doubleArraySize() {
-    Node[] tmp = new Node[q.length * 2];
-    System.arraycopy(q, 1, tmp, 1, size);
-    q = tmp;
-  }
-
-  private int getLeftChild(int i) {
-    return i * 2;
-  }
-
-  private int getRightChild(int i) {
-    return i * 2 + 1;
-  }
-
-  private int getParent(int i) {
-    return i / 2;
-  }
-}
-
 final float COLOR_DETECTION_THRESHOLD = 60.0;
 
 Capture cap;
@@ -299,17 +176,16 @@ void loadAStar(Node end) {
     return;
   } else {
     PImage drawn = cap;
-    image(drawn , 0 , 0);
+    image(drawn, 0, 0);
     Node tmp = end;
+    fill(walker);
+    strokeWeight(3.2);
+    stroke(0);
     while (tmp != null) {
-      fill(walker);
-      strokeWeight(3.2);
-      stroke(0);
       ellipse(tmp.r, tmp.c, 15, 15);
-      System.out.printf("%3d , %3d\n" , tmp.r , tmp.c);
+      System.out.printf("%3d , %3d\n", tmp.r, tmp.c);
       tmp = tmp.getParent();
     }
-    image(drawn , 0 , 0);
     keepDrawing = false;
     System.out.println("Done!");
   }
@@ -322,3 +198,4 @@ void draw() {
     loadAStar(AStar());
   }
 }
+
