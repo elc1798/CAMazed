@@ -10,14 +10,16 @@ import processing.video.*;
 Capture video;
 
 // A variable for the color we are searching for.
-color trackColor; 
+color trackColorSTART;
+color trackColorEND;
 
 void setup() {
   size(320, 240);
   video = new Capture(this, width, height);
   video.start();
   // Start off tracking for red
-  trackColor = color(255, 0, 0);
+  trackColorSTART = color(255, 0, 0);
+  trackColorEND = color(0, 0, 255);
 }
 
 void captureEvent(Capture video) {
@@ -45,38 +47,45 @@ void draw() {
       float r1 = red(currentColor);
       float g1 = green(currentColor);
       float b1 = blue(currentColor);
-      float r2 = red(trackColor);
-      float g2 = green(trackColor);
-      float b2 = blue(trackColor);
-
+      float r2 = red(trackColorSTART);
+      float g2 = green(trackColorSTART);
+      float b2 = blue(trackColorSTART);
+      float r3 = red(trackColorEND);
+      float g3 = green(trackColorEND);
+      float b3 = blue(trackColorEND);
       // Using euclidean distance to compare colors
-      float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
-
+      float d1 = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
+      float d2 = dist(r1, g1, b1, r3, g3, b3);
       // If current color is more similar to tracked color than
       // closest color, save current location and current difference
-      if (d < worldRecord) {
-        worldRecord = d;
+      if (d1 < worldRecord) {
+        worldRecord = d1;
         closestX = x;
         closestY = y;
+        if (d2 < worldRecord) {
+          worldRecord = d2;
+          closestX = x;
+          closestY = y;
+        }
       }
     }
-  }
 
-  // We only consider the color found if its color distance is less than 10. 
-  // This threshold of 10 is arbitrary and you can adjust this number depending on how accurate you require the tracking to be.
-  if (worldRecord < 10) { 
-    // Draw a circle at the tracked pixel
-    fill(trackColor);
-    System.out.printf("%4f , %4f , %4f\n" , red(trackColor) , green(trackColor) , blue(trackColor));
-    strokeWeight(4.0);
-    stroke(0);
-    ellipse(closestX, closestY, 16, 16);
+    // We only consider the color found if its color distance is less than 10. 
+    // This threshold of 10 is arbitrary and you can adjust this number depending on how accurate you require the tracking to be.
+    if (worldRecord < 10) { 
+      // Draw a circle at the tracked pixel
+      fill(trackColorSTART);
+      System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
+      strokeWeight(4.0);
+      stroke(0);
+      ellipse(closestX, closestY, 16, 16);
+    }
   }
 }
 
 void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*video.width;
-  trackColor = video.pixels[loc];
+  trackColorSTART = video.pixels[loc];
 }
 

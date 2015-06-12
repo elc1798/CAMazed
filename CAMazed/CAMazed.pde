@@ -15,7 +15,7 @@ Node finishNode;
 boolean keepDrawing = true;
 
 void setup() {
-  size(800, 600);
+  size(640, 480);
   cap = new Capture(this, width, height);
   cap.start();
 }
