@@ -190,12 +190,13 @@ void loadAStar(Node end) {
       System.out.printf("%3d , %3d\n", tmp.r, tmp.c);
       tmp = tmp.getParent();
     }
-    keepDrawing = false;
+    //keepDrawing = false;
     System.out.println("Done!");
   }
 }
 
 void draw() {
+  
   if (keepDrawing) {
     cap.loadPixels();
     image(cap, 0, 0);
@@ -205,8 +206,8 @@ void draw() {
 
 void keyPressed() {
   switch (key) {
-    case 's': SelectMode = true; break;
-    case 'e': SelectMode = false; break;
+    case 's': SelectMode = true; System.out.println("Select the start point"); break;
+    case 'e': SelectMode = false; System.out.println("Select the end point"); break;
     case 'r': //reset; break;
   }
 }
@@ -216,9 +217,11 @@ void mousePressed() {
   int loc = mouseX + mouseY*cap.width;
   if (SelectMode = true){
     trackColorSTART = cap.pixels[loc];
+    System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
   }
   if (SelectMode = false){
     trackColorEND = cap.pixels[loc];
+    keepDrawing = false; //stops the camera once the end points are done
   }  
 }
 
