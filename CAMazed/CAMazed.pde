@@ -201,7 +201,7 @@ void draw() {
   if (keepDrawing) {
     cap.loadPixels();
     image(cap, 0, 0);
-    //loadAStar(AStar());
+    loadAStar(AStar());
   
 
   float COLOR_DETECTION_THRESHOLD = 50; 
