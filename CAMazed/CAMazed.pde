@@ -270,8 +270,7 @@ void mousePressed() {
     trackColorSTART = cap.pixels[loc];
     System.out.print("Start point color : ");
     System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
-  } 
-  else {
+  } else {
     trackColorEND = cap.pixels[loc];
     System.out.print("End point color : ");
     System.out.printf("%4f , %4f , %4f\n", red(trackColorEND), green(trackColorEND), blue(trackColorEND));
