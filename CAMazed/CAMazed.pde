@@ -4,7 +4,8 @@ import java.util.Comparator;
 
 color trackColorSTART;
 color trackColorEND;
-boolean SelectMode = true;
+color blank;
+boolean SelectMode;
 
 final float COLOR_DETECTION_THRESHOLD = 60.0;
 
@@ -206,21 +207,25 @@ void draw() {
 
 void keyPressed() {
   switch (key) {
-    case 's': SelectMode = true; System.out.println("Select the start point"); break;
-    case 'e': SelectMode = false; System.out.println("Select the end point"); break;
-    case 'r': //reset; break;
+    case 's': SelectMode = true; System.out.println("Select the start point color "); keepDrawing = true; break;
+    case 'e': SelectMode = false; System.out.println("Select the end point color "); break;
+    case 'r': trackColorSTART = blank; trackColorEND = blank;
+    case 'p': System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
   }
 }
 
 void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*cap.width;
-  if (SelectMode = true){
-    trackColorSTART = cap.pixels[loc];
-    System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
+  if (SelectMode == true){
+      trackColorSTART = cap.pixels[loc];
+      System.out.print("Start point color : ");
+      System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
   }
-  if (SelectMode = false){
+  else {
     trackColorEND = cap.pixels[loc];
+    System.out.print("End point color : ");
+    System.out.printf("%4f , %4f , %4f\n", red(trackColorEND), green(trackColorEND), blue(trackColorEND));
     keepDrawing = false; //stops the camera once the end points are done
   }  
 }
