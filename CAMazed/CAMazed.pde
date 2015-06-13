@@ -207,10 +207,22 @@ void draw() {
 
 void keyPressed() {
   switch (key) {
-    case 's': SelectMode = true; System.out.println("Select the start point color "); keepDrawing = true; break;
+    case 's': {
+      SelectMode = true;
+      trackColorSTART = blank;
+      trackColorEND = blank;
+      System.out.println("Select the start point color "); 
+      keepDrawing = true; 
+      break;
+    }
     case 'e': SelectMode = false; System.out.println("Select the end point color "); break;
-    case 'r': trackColorSTART = blank; trackColorEND = blank;
-    case 'p': System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
+//    case 'r': trackColorSTART = blank; trackColorEND = blank; not included because 's' resets once clicked again
+    case 'p': {
+        System.out.println("[Starting point RGB]");
+        System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
+        System.out.println("[ Ending point RGB ]");
+        System.out.printf("%4f , %4f , %4f\n", red(trackColorEND), green(trackColorEND), blue(trackColorEND));
+    }
   }
 }
 
