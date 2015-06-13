@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 color trackColorSTART;
 color trackColorEND;
-color blank = color(255, 0 , 0);
+color blank = color(255, 0, 0);
 boolean SelectMode;
 float COLOR_DETECTION_THRESHOLD = 500; 
 
@@ -202,36 +202,39 @@ void draw() {
     cap.loadPixels();
     image(cap, 0, 0);
     loadAStar(AStar());
-  
 
-  float COLOR_DETECTION_THRESHOLD = 50; 
-  int closestXstart = 0;
-  int closestYstart = 0;
-  int closestXend = 0;
-  int closestYend = 0;
 
-  for (int x = 0; x < cap.width; x ++ ) {
-    for (int y = 0; y < cap.height; y ++ ) {
-      int loc = x + y*cap.width;
-      color currentColor = cap.pixels[loc];
-      float r1 = red(currentColor);
-      float g1 = green(currentColor);
-      float b1 = blue(currentColor);
-      float r2 = red(trackColorSTART);
-      float g2 = green(trackColorSTART);
-      float b2 = blue(trackColorSTART);
-      float d1 = dist(r1, g1, b1, r2, g2, b2);
-      if (d1 < COLOR_DETECTION_THRESHOLD) {
-        COLOR_DETECTION_THRESHOLD = d1;
-        closestXstart = x;
-        closestYstart = y;}}
-    if (COLOR_DETECTION_THRESHOLD < 10) { 
-      fill(trackColorSTART);
-      strokeWeight(4.0);
-      stroke(0);
-      ellipse(closestXstart, closestYstart, 48, 48);}
+    float COLOR_DETECTION_THRESHOLD = 50; 
+    int closestXstart = 0;
+    int closestYstart = 0;
+    int closestXend = 0;
+    int closestYend = 0;
+
+    for (int x = 0; x < cap.width; x ++ ) {
+      for (int y = 0; y < cap.height; y ++ ) {
+        int loc = x + y*cap.width;
+        color currentColor = cap.pixels[loc];
+        float r1 = red(currentColor);
+        float g1 = green(currentColor);
+        float b1 = blue(currentColor);
+        float r2 = red(trackColorSTART);
+        float g2 = green(trackColorSTART);
+        float b2 = blue(trackColorSTART);
+        float d1 = dist(r1, g1, b1, r2, g2, b2);
+        if (d1 < COLOR_DETECTION_THRESHOLD) {
+          COLOR_DETECTION_THRESHOLD = d1;
+          closestXstart = x;
+          closestYstart = y;
+        }
+      }
+      if (COLOR_DETECTION_THRESHOLD < 10) { 
+        fill(trackColorSTART);
+        strokeWeight(4.0);
+        stroke(0);
+        ellipse(closestXstart, closestYstart, 48, 48);
+      }
+    }
   }
- } 
 }
 
 void keyPressed() {
@@ -267,7 +270,8 @@ void mousePressed() {
     trackColorSTART = cap.pixels[loc];
     System.out.print("Start point color : ");
     System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
-  } else {
+  } 
+  else {
     trackColorEND = cap.pixels[loc];
     System.out.print("End point color : ");
     System.out.printf("%4f , %4f , %4f\n", red(trackColorEND), green(trackColorEND), blue(trackColorEND));
@@ -276,6 +280,7 @@ void mousePressed() {
     strokeWeight(4.0);
     stroke(0);
     ellipse(mouseX, mouseY, 48, 48);
+    endCoor = (mouseX, mouseY);
   }
 }
 
