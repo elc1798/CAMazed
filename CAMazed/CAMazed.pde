@@ -2,6 +2,10 @@ import processing.video.*;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 
+color trackColorSTART;
+color trackColorEND;
+boolean SelectMode = true;
+
 final float COLOR_DETECTION_THRESHOLD = 60.0;
 
 Capture cap;
@@ -197,5 +201,24 @@ void draw() {
     image(cap, 0, 0);
     loadAStar(AStar());
   }
+}
+
+void keyPressed() {
+  switch (key) {
+    case 's': SelectMode = true; break;
+    case 'e': SelectMode = false; break;
+    case 'r': //reset; break;
+  }
+}
+
+void mousePressed() {
+  // Save color where the mouse is clicked in trackColor variable
+  int loc = mouseX + mouseY*cap.width;
+  if (SelectMode = true){
+    trackColorSTART = cap.pixels[loc];
+  }
+  if (SelectMode = false){
+    trackColorEND = cap.pixels[loc];
+  }  
 }
 
