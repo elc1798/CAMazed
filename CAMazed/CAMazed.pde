@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 color trackColorSTART;
 color trackColorEND;
-color blank;
+color blank = color(255, 0 , 0);
 boolean SelectMode;
 float COLOR_DETECTION_THRESHOLD = 500; 
 
@@ -22,6 +22,8 @@ void setup() {
   size(640, 480);
   cap = new Capture(this, width, height);
   cap.start();
+  trackColorSTART = color(255, 0, 0);
+  trackColorEND = color(225, 0, 0);
 }
 
 void captureEvent(Capture cap) {
@@ -199,21 +201,18 @@ void draw() {
   if (keepDrawing) {
     cap.loadPixels();
     image(cap, 0, 0);
-    loadAStar(AStar());
-  }
-  // XY coordinate of closest color
-  float COLOR_DETECTION_THRESHOLD = 60; 
-//  float COLOR_DETECTION_THRESHOLD2 = 60;
+    //loadAStar(AStar());
+  
+
+  float COLOR_DETECTION_THRESHOLD = 50; 
   int closestXstart = 0;
   int closestYstart = 0;
   int closestXend = 0;
   int closestYend = 0;
 
-  // Begin loop to walk through every pixel
   for (int x = 0; x < cap.width; x ++ ) {
     for (int y = 0; y < cap.height; y ++ ) {
       int loc = x + y*cap.width;
-      // What is current color
       color currentColor = cap.pixels[loc];
       float r1 = red(currentColor);
       float g1 = green(currentColor);
@@ -221,38 +220,19 @@ void draw() {
       float r2 = red(trackColorSTART);
       float g2 = green(trackColorSTART);
       float b2 = blue(trackColorSTART);
-      float r3 = red(trackColorEND);
-      float g3 = green(trackColorEND);
-      float b3 = blue(trackColorEND);
-      // Using euclidean distance to compare colors
-      float d1 = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
-      float d2 = dist(r1, g1, b1, r3, g3, b3);
-      // If current color is more similar to tracked color than
-      // closest color, save current location and current difference
+      float d1 = dist(r1, g1, b1, r2, g2, b2);
       if (d1 < COLOR_DETECTION_THRESHOLD) {
         COLOR_DETECTION_THRESHOLD = d1;
         closestXstart = x;
-        closestYstart = y;
-      }
-      if (d2 < COLOR_DETECTION_THRESHOLD) {
-        COLOR_DETECTION_THRESHOLD = d2;
-        closestXend = x;
-        closestYend = y;
-      }
-    }
+        closestYstart = y;}}
+    if (COLOR_DETECTION_THRESHOLD < 10) { 
+      fill(trackColorSTART);
+      strokeWeight(4.0);
+      stroke(0);
+      ellipse(closestXstart, closestYstart, 48, 48);}
   }
-
-  // We only consider the color found if its color distance is less than 10. 
-  // This threshold of 10 is arbitrary and you can adjust this number depending on how accurate you require the tracking to be.
-  if (COLOR_DETECTION_THRESHOLD < 10) { 
-    // Draw a circle at the tracked pixel
-    fill(trackColorSTART);
-    //System.out.printf("%4f , %4f , %4f\n", red(trackColorSTART), green(trackColorSTART), blue(trackColorSTART));
-    strokeWeight(4.0);
-    stroke(0);
-    ellipse(closestXstart, closestYend, 16, 16);
-  }
-}//
+ } 
+}
 
 void keyPressed() {
   switch (key) {
@@ -292,6 +272,10 @@ void mousePressed() {
     System.out.print("End point color : ");
     System.out.printf("%4f , %4f , %4f\n", red(trackColorEND), green(trackColorEND), blue(trackColorEND));
     keepDrawing = false; //stops the camera once the end points are done
+    fill(trackColorEND);
+    strokeWeight(4.0);
+    stroke(0);
+    ellipse(mouseX, mouseY, 48, 48);
   }
 }
 
