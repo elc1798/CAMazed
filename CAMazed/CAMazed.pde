@@ -280,7 +280,7 @@ void mousePressed() {
     strokeWeight(4.0);
     stroke(0);
     ellipse(mouseX, mouseY, 48, 48);
-    endCoor = (mouseX, mouseY);
+    endCoor = {mouseX, mouseY};
   }
 }
 
