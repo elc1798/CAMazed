@@ -18,3 +18,8 @@ The project is incomplete because it does not function properly.
 
 The maze is detected and is solved, but the algorithm is slightly flawed and
 needs to be improved. Solution drawing does not work.
+
+### Supplemental Projects
+
++ https://github.com/elc1798/CavernWars-Java
++ https://github.com/elc1798/jShell
