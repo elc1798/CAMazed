@@ -23,3 +23,8 @@ needs to be improved. Solution drawing does not work.
 
 Other version of the project (complete overhaul of this branch of code) is available
 on the v1.0 branch in the CAMazedV2 folder.
+
+### Supplemental Projects
+
++ https://github.com/elc1798/CavernWars-Java
++ https://github.com/elc1798/jShell
