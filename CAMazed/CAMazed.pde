@@ -1,6 +1,4 @@
 import processing.video.*;
-import java.util.PriorityQueue;
-import java.util.Comparator;
 
 color trackColorSTART;
 color trackColorEND;
@@ -17,6 +15,8 @@ final color walker = color(255, 204, 0);
 
 Node finishNode;
 boolean keepDrawing = true;
+int[] startCoor;
+int[] endCoor;
 
 void setup() {
   size(640, 480);
@@ -90,8 +90,8 @@ double distance(Node n1, Node n2) {
 }
 
 Node AStar() {
-  int[] startCoor = findStart();
-  int[] endCoor = findEnd();
+  startCoor = findStart();
+  endCoor = findEnd();
   if (startCoor[0] == -1 || startCoor[1] == -1 || endCoor[0] == -1 || endCoor[1] == -1) {
     return null;
   }
@@ -280,7 +280,6 @@ void mousePressed() {
     strokeWeight(4.0);
     stroke(0);
     ellipse(mouseX, mouseY, 48, 48);
-    endCoor = {mouseX, mouseY};
+    endCoor = new int[]{mouseX, mouseY};
   }
 }
-
