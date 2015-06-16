@@ -18,3 +18,8 @@ The project is incomplete because it does not function properly.
 
 The maze is detected and is solved, but the algorithm is slightly flawed and
 needs to be improved. Solution drawing does not work.
+
+## UPDATES:
+
+Other version of the project (complete overhaul of this branch of code) is available
+on the v1.0 branch in the CAMazedV2 folder.
