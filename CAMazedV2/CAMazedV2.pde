@@ -30,6 +30,7 @@ void setup() {
   walker = color(225, 0, 0);
   regularDisplay = true;
   generate = false;
+  COLOR_DETECTION_THRESHOLD = 75;
   detector.setLowThreshold(0.5f);
   detector.setHighThreshold(1f);
   edges = createImage(width, height, RGB);
@@ -124,7 +125,18 @@ void draw() {
           }
         }
       }
-      image(start , 0 , 0);
+      image(combine , 0 , 0);
+      Node solution = solver.AStar(combine , startCoor , endCoor , color(0 , 0 , 0) , color(255 , 0 , 0));
+      if (solution == null) {
+        return;
+      } else {
+        Node tmp = solution;
+        while (tmp != null) {
+          System.out.println(tmp.r + " " + tmp.c);
+          frozen.pixels[tmp.r + tmp.c * frozen.width] = color(255 , 0 , 0);
+          tmp = tmp.getParent();
+        }
+      }
     } else {
       image(frozen , 0 , 0);
     }
@@ -171,11 +183,14 @@ void mousePressed() {
     startColor = cap.pixels[loc];
     regularDisplay = false;
     generate = false;
+    startCoor = new int[] {
+      mouseX , mouseY
+    };
     selectorMode = 1;
   } else if (selectorMode == 1) {
     endColor = cap.pixels[loc];
     endCoor = new int[] {
-      mouseX, mouseY
+      mouseX , mouseY
     };
     selectorMode = -1;
     regularDisplay = false;
