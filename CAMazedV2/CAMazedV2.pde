@@ -57,8 +57,10 @@ void loadStart() {
   }
   for (int i = 0; i < 3; i++) {
     // Blur the image afterwards
-    start.filter(BLUR , 2);
+    start.filter(BLUR, 2);
   }
+  // Invert Image
+  start.filter(INVERT);
 }
 
 void loadEnd() {
@@ -78,8 +80,10 @@ void loadEnd() {
   }
   for (int i = 0; i < 3; i++) {
     // Blur the image afterwards
-    start.filter(BLUR , 2);
+    end.filter(BLUR, 2);
   }
+  // Invert Image
+  end.filter(INVERT);
 }
 
 void loadEdges() {
