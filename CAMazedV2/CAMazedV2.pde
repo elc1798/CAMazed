@@ -4,20 +4,28 @@ import java.awt.image.BufferedImage;
 // Color variables
 color startColor;
 color endColor;
-color walker = color(225, 225, 0);
-boolean selectorMode;
+color walker;
+int selectorMode;
 float COLOR_DETECTION_THRESHOLD;
 
 Capture cap;
-EdgeDetector detector = new EdgeDetector();
+EdgeDetector detector;
 PImage edges;
 PImage start;
 PImage end;
 PImage frame;
 BufferedImage detectorBuffer;
+boolean regularDisplay;
+boolean freeze;
+
 
 void setup() {
   size(480, 360);
+  selectorMode = -1;
+  detector = new EdgeDetector();
+  walker = color(225, 0, 0);
+  regularDisplay = true;
+  freeze = false;
   detector.setLowThreshold(0.5f);
   detector.setHighThreshold(1f);
   edges = createImage(width, height, RGB);
@@ -81,14 +89,64 @@ void loadEdges() {
   detector.process();
   detectorBuffer = detector.getEdgesImage();
   edges = new PImage(detectorBuffer);
-  start.filter(BLUR , 2);
+  start.filter(BLUR, 2);
   // Invert Image
   edges.filter(INVERT);
 }
 
 void draw() {
   cap.loadPixels();
-  loadEdges();
-  image(edges, 0, 0);
+  if (regularDisplay) {
+    image(cap, 0, 0);
+  } else {
+    
+  }
+}
+
+void keyPressed() {
+  switch (key) {
+  case 's':
+    selectorMode = 0;
+    System.out.println("Select the start point color ");
+    keepDrawing = true;
+    break;
+  case 'e':
+    selectorMode = 1;
+    System.out.println("Select the end point color ");
+    break;
+  case 'p':
+    System.out.println("[Starting point RGB]");
+    System.out.printf("%4f , %4f , %4f\n", red(startColor), green(startColor), blue(startColor));
+    System.out.println("[ Ending point RGB ]");
+    System.out.printf("%4f , %4f , %4f\n", red(endColor), green(endColor), blue(endColor));
+    break;
+  case ESC:
+    selectorMode = -1;
+    break;
+  case r:
+    regularDisplay = true;
+    freeze = false;
+    selectorMode = -1;
+    break;
+  default:
+    System.out.println("Invalid key!");
+  }
+}
+
+void mousePressed() {
+  // Save color where the mouse is clicked in trackColor variable
+  int loc = mouseX + mouseY * cap.width;
+  if (selectorMode == 0) {
+    startColor = cap.pixels[loc];
+    regularDisplay = false;
+    freeze = true;
+    selectorMode = 1;
+  } else if (selectorMode == 1) {
+    trackColorEND = cap.pixels[loc];
+    endCoor = new int[] {
+      mouseX, mouseY
+    };
+    selectorMode = -1;
+  }
 }
 
