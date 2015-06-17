@@ -26,7 +26,7 @@ public class MazeSolver {
         push q on the closed list
     end
   */
-  public static Node AStar(PImage MAZE , int[] startCoor , int[] endCoor , Color wallColor) {
+  public Node AStar(PImage MAZE , int[] startCoor , int[] endCoor , color wallColor , color path) {
     PImage maze = MAZE.get();
 
     Node current = null;
@@ -42,21 +42,19 @@ public class MazeSolver {
     Node[] children = new Node[8];
 
     while (!open.empty ()) {
-      // Get node with priority from heap
       current = open.pop();
       closed.add(current);
-      // Exit immediately if out of bounds
-      if (outOfBounds(current)) {
+      if (current.r < 0 || current.c < 0 || current.r >= maze.width || current.c >= maze.height) {
         continue;
       }
-      // Load element for easy access
-      color currColor = maze.pixels[current.r + current.c * cap.width];
-      // Set the current grid element to a visited element
-      if (isOnPath(currColor)) {
-        cap.pixels[current.r + current.c * cap.width] = walker;
+      color currColor = maze.pixels[current.r + current.c * maze.width];
+      if (currColor != wallColor && currColor != path) {
+        maze.pixels[current.r + current.c * cap.width] = path;
       }
-      if (isOnPath(currColor) || isOnStart(currColor) || isOnEnd(currColor)) {
-        // Setup successors
+      if (current.r == endCoor[0] && current.c == endCoor[1]) {
+        return current;
+      }
+      if (currColor != wallColor) {
         children = new Node[] {
           new Node(current.r - 1, current.c), 
           new Node(current.r + 1, current.c), 
@@ -67,23 +65,19 @@ public class MazeSolver {
           new Node(current.r + 1, current.c - 1), 
           new Node(current.r + 1, current.c + 1)
           };
-          // Check to see if successor should be added based on priority
           for (Node n : children) {
-            // If child is out of bounds or a wall or has been visited, do not process
-            if (outOfBounds(n) || isOnWall(currColor) || isOnWalker(currColor)) {
+            color tmp = maze.pixels[n.r + n.c * maze.width];
+            if (tmp == wallColor || tmp == path) {
               continue;
             }
             n.setParent(current);
-            if (isOnEnd(currColor)) {
-              finishNode = n;
+            if (n.r == endCoor[0] && n.c == endCoor[1]) {
               return n;
             }
-            // Use costs to implement heuristics
-            n.tailCost = current.tailCost + distance(current, n);
+            n.tailCost = current.tailCost + (current.r - n.r) * (current.r - n.r) + (current.c - n.c) * (current.c - n.c);
             n.headCost = (endCoor[0] - n.r) * (endCoor[0] - n.r) + (endCoor[1] - n.c) * (endCoor[1] - n.c);
             n.cost = n.tailCost + n.headCost;
 
-            // Check if the node is best case for current position
             boolean insert = true;
             for (Node a : open.toArray ()) {
               if (a != null && a.r == n.r && a.c == n.c && a.cost < n.cost) {
