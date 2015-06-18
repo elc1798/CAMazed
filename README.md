@@ -40,6 +40,8 @@ the webcam image.
 
 + Run the program by pressing the "start" or "play" button at the top of the
   Processing IDE
++ Hold a printed maze, or one of the sample ones in the CAMazed directory, up to
+  the webcam so it is fully displayed on the webcam display.
 + Press the 's' key and click where the start of the maze is. It is much advised
   that you use a black and white maze with different colored dots to signify the
   start and end, such as the ones provided in the CAMazed directory.
