@@ -72,7 +72,7 @@ public class MazeSolver {
               continue;
             }
             n.setParent(current);
-            if (n.r == endCoor[0] && n.c == endCoor[1]) {
+            if ((n.r < endCoor[0] + 5 && n.r > endCoor[0] - 5) && (n.c < endCoor[1] + 5 && n.c > endCoor[1] - 5)) {
               return n;
             }
             n.tailCost = current.tailCost + (current.r - n.r) * (current.r - n.r) + (current.c - n.c) * (current.c - n.c);
