@@ -26,13 +26,29 @@ public class MazeSolver {
         push q on the closed list
     end
   */
+
+  /*
+   * There is an issue with an ENORMOUS branching factor, which SEVERELY impacts runtime.
+   * The close heap also fills up very quickly, and looping through this heap 8 times per node is ridiculous.
+   * Therefore... we remove this 'heap check'. Instead we store minimum fs in a 2D array. This allows for constant time checking.
+   */
+  
+  double[][] closed;
+
   public Node AStar(PImage MAZE , int[] startCoor , int[] endCoor , color wallColor , color path) {
     PImage maze = MAZE.get();
 
     Node current = null;
     Node buffer = new Node(startCoor[0], startCoor[1]);
     MazeHeap open = new MazeHeap();
-    MazeHeap closed = new MazeHeap();
+    closed = new double[MAZE.width][MAZE.height];
+
+    // Make all fs in closed -1, which signifies unset
+    for (int r = 0; r < closed.length; r++) {
+      for (int c = 0; c < closed[r].length; c++) {
+        closed[r][c] = -1.0;
+      }
+    }
 
     buffer.tailCost = 0.0;
     buffer.headCost = 0.0;
@@ -43,13 +59,14 @@ public class MazeSolver {
 
     while (!open.empty ()) {
       current = open.pop();
-      closed.add(current);
-      if (current.r < 0 || current.c < 0 || current.r >= maze.width || current.c >= maze.height) {
+      closed[current.r][current.c] = current.cost;
+      if (current.r < 0 || current.c < 0 || current.r >= maze.height || current.c >= maze.width) {
         continue;
       }
       color currColor = maze.pixels[current.r + current.c * maze.width];
       if (currColor != wallColor && currColor != path) {
         maze.pixels[current.r + current.c * cap.width] = path;
+        println(current.r + " " + current.c + " " + endCoor[0] + " " + endCoor[1]);
       }
       if (current.r == endCoor[0] && current.c == endCoor[1]) {
         return current;
@@ -70,8 +87,11 @@ public class MazeSolver {
             if (tmp == wallColor || tmp == path) {
               continue;
             }
+            if (n.r < 0 || n.c < 0 || n.r > maze.height || n.c > maze.width) {
+              continue;
+            }
             n.setParent(current);
-            if (n.r == endCoor[0] && n.c == endCoor[1]) {
+            if ((n.r < endCoor[0] + 5 && n.r > endCoor[0] - 5) && (n.c < endCoor[1] + 5 && n.c > endCoor[1] - 5)) {
               return n;
             }
             n.tailCost = current.tailCost + (current.r - n.r) * (current.r - n.r) + (current.c - n.c) * (current.c - n.c);
@@ -85,13 +105,15 @@ public class MazeSolver {
                 break;
               }
             }
-            for (Node a : closed.toArray ()) {
-              if (!insert) {
-                break;
-              }
-              if (a != null && a.r == n.r && a.c == n.c && a.cost < n.cost) {
+            if (insert) {
+              if (closed[n.r][n.c] < 0.0) {
+                insert = true; // assert
+                closed[n.r][n.c] = n.cost;
+              } else if (closed[n.r][n.c] > n.cost) {
+                insert = true; // assert
+                closed[n.r][n.c] = n.cost;
+              } else { // if closed[n.r][n.c] < n.cost, then n.cost is not min, and should not be altered or added
                 insert = false;
-                break;
               }
             }
             if (insert) {
