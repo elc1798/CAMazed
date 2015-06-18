@@ -26,7 +26,6 @@ void setup() {
   selectorMode = -1;
   detector = new EdgeDetector();
   solver = new MazeSolver();
-  walker = color(225, 0, 0);
   regularDisplay = true;
   generate = false;
   COLOR_DETECTION_THRESHOLD = 75;
@@ -123,7 +122,7 @@ void loadEdges(PImage img) {
 void draw() {
   cap.loadPixels();
   if (regularDisplay) {
-    image(cap, 0, 0);
+    image(cap , 0 , 0);
     frozen.copy(cap, 0, 0, cap.width, cap.height, 0, 0, cap.width, cap.height);
   } else {
     if (generate) {
@@ -143,17 +142,18 @@ void draw() {
       }
       combine.updatePixels();
       combine.filter(INVERT);
-      Node solution = solver.AStar(combine , startCoor , endCoor , color(0 , 0 , 0) , color(0 , 255 , 0));
+      Node solution = null;
+      solution = solver.AStar(combine , startCoor , endCoor , color(0 , 0 , 0) , color(255 , 255 , 0));
       if (solution == null) {
         System.out.println("No solution");
         return;
       } else {
         Node tmp = solution;
         while (tmp != null) {
-          System.out.println(tmp.r + " " + tmp.c);
-          frozen.pixels[tmp.r + tmp.c * frozen.width] = color(255 , 0 , 0);
+          frozen.pixels[tmp.r + tmp.c * frozen.width] = color(0 , 255 , 0);
           tmp = tmp.getParent();
         }
+        noLoop();
       }
       frozen.updatePixels();
       image(frozen , 0 , 0);
