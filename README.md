@@ -36,6 +36,18 @@ the webcam image.
         + ** NOTE ** That all the images that begin with 'simple' are basic
           mazes with minimal walls.
 
+## How to use this program
+
++ Run the program by pressing the "start" or "play" button at the top of the
+  Processing IDE
++ Press the 's' key and click where the start of the maze is. It is much advised
+  that you use a black and white maze with different colored dots to signify the
+  start and end, such as the ones provided in the CAMazed directory.
++ The camera will freeze and allow the image to be static in order for the next
+  step.
++ Press the 'e' key and click where the end of the maze is.
++ The solution should generate after a few seconds in a thin neon green line!
+
 ### Supplemental Projects for Ethan Cheng
 
 + https://github.com/elc1798/CavernWars-Java
