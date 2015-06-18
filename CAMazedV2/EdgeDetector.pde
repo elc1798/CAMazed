@@ -104,7 +104,9 @@ public class EdgeDetector {
     picsize = width * height;
     initArrays();
     readLuminance();
-    if (contrastNormalized) normalizeContrast();
+    if (contrastNormalized) {
+      normalizeContrast();
+    }
     computeGradients(gaussianKernelRadius, gaussianKernelWidth);
     int low = Math.round(lowThreshold * MAGNITUDE_SCALE);
     int high = Math.round( highThreshold * MAGNITUDE_SCALE);

@@ -47,6 +47,7 @@ public class MazeSolver {
       if (current.r < 0 || current.c < 0 || current.r >= maze.width || current.c >= maze.height) {
         continue;
       }
+      System.out.println(current.r + " " + current.c);
       color currColor = maze.pixels[current.r + current.c * maze.width];
       if (currColor != wallColor && currColor != path) {
         maze.pixels[current.r + current.c * cap.width] = path;
