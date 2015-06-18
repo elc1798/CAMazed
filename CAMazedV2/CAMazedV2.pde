@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 // Color variables
 color startColor;
 color endColor;
-color walker;
 int selectorMode;
 float COLOR_DETECTION_THRESHOLD;
 
@@ -61,11 +60,6 @@ void loadStart(PImage img) {
       }
     }
   }
-  for (int i = 0; i < 3; i++) {
-    // Blur the image afterwards
-    start.filter(BLUR, 2);
-  }
-  // Invert Image
   start.filter(INVERT);
 }
 
@@ -84,24 +78,46 @@ void loadEnd(PImage img) {
       }
     }
   }
-  for (int i = 0; i < 3; i++) {
-    // Blur the image afterwards
-    end.filter(BLUR, 2);
-  }
-  // Invert Image
   end.filter(INVERT);
 }
 
-void loadEdges(PImage img) {
-  frame = createImage(width, height, RGB);
-  frame.copy(img, 0, 0, img.width, img.height, 0, 0, img.width, img.height);
+void loadEdgesGaussian(PImage img) {
+  frame = createImage(img.width, img.height, RGB);
+  //frame.copy(img, 0, 0, img.width, img.height, 0, 0, img.width, img.height);
+  frame = img.get();
   detector.setSourceImage((BufferedImage)frame.getNative());
   detector.process();
   detectorBuffer = detector.getEdgesImage();
   edges = new PImage(detectorBuffer);
-  start.filter(BLUR, 2);
+  edges.filter(BLUR, 2);
   // Invert Image
   edges.filter(INVERT);
+}
+
+void loadEdges(PImage img) {
+  PImage edgeImg = createImage(img.width, img.height, RGB);
+  edgeImg.filter(GRAY);
+  float[][] kernel = {{ -1, -1, -1}, 
+                    { -1,  9, -1}, 
+                    { -1, -1, -1}};
+  // Loop through every pixel in the image.
+  for (int y = 1; y < img.height-1; y++) { // Skip top and bottom edges
+    for (int x = 1; x < img.width-1; x++) { // Skip left and right edges
+      float sum = 0; // Kernel sum for this pixel
+      for (int ky = -1; ky <= 1; ky++) {
+        for (int kx = -1; kx <= 1; kx++) {
+          int pos = (y + ky)*img.width + (x + kx);
+          float val = red(img.pixels[pos]);
+          sum += kernel[ky+1][kx+1] * val;
+        }
+      }
+      edgeImg.pixels[y*img.width + x] = color(sum, sum, sum);
+    }
+  }
+  edgeImg.updatePixels();
+  edges = edgeImg;
+  edges.filter(INVERT);
+  edges.filter(THRESHOLD , 0.9);
 }
 
 void draw() {
@@ -117,17 +133,19 @@ void draw() {
       PImage combine = createImage(width , height , RGB);
       for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
-          int white = (int)(red(start.pixels[x + y * start.width]) + red(end.pixels[x + y * end.width]) + red(edges.pixels[x + y * end.width]));
-          if (white == 0) {
+          int loc = x + y * combine.width;
+          if (start.pixels[loc] == color(0 , 0 , 0) || end.pixels[loc] == color(0 , 0 , 0) || edges.pixels[loc] == color(0 , 0 , 0)) {
             combine.pixels[x + y * combine.width] = color(0 , 0 , 0);
           } else {
             combine.pixels[x + y * combine.width] = color(255 , 255 , 255);
           }
         }
       }
-      image(combine , 0 , 0);
-      Node solution = solver.AStar(combine , startCoor , endCoor , color(0 , 0 , 0) , color(255 , 0 , 0));
+      combine.updatePixels();
+      combine.filter(INVERT);
+      Node solution = solver.AStar(combine , startCoor , endCoor , color(0 , 0 , 0) , color(0 , 255 , 0));
       if (solution == null) {
+        System.out.println("No solution");
         return;
       } else {
         Node tmp = solution;
@@ -137,6 +155,8 @@ void draw() {
           tmp = tmp.getParent();
         }
       }
+      frozen.updatePixels();
+      image(frozen , 0 , 0);
     } else {
       image(frozen , 0 , 0);
     }
